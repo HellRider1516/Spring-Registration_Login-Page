@@ -1,7 +1,8 @@
 package in.mahesh.Service;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +16,7 @@ public class InstrgramServiceImp implements InstrgramService {
 	@Autowired
 	private InstragramRepo repo;
 	@Autowired
-	private EmailSend mail;
+	private EmailSend mailSended;
 	
 	@EventListener
 	
@@ -23,7 +24,7 @@ public class InstrgramServiceImp implements InstrgramService {
 	public boolean saveInstrgram(Instrgram i) {
 		Instrgram saved = repo.save(i);
 		if(saved.getId() != null) {
-			mail.mailSend(saved.getMail(), "Instrgram Account", "Congrations your Instragram account has been Created Sucessfully..");
+			mailSended.mailSend(saved.getMail(), "Instrgram Account", "Congrations your Instragram account has been Created Sucessfully..");
 		}else {
 			return false;
 		}
@@ -35,6 +36,67 @@ public class InstrgramServiceImp implements InstrgramService {
 		Instrgram obj = repo.findByMailAndPassword(mailId,password);
 		return obj;
 	}
+
+	@Override
+	public Optional<Instrgram> checkExsitOrNot(String mailId) {
+		 Optional<Instrgram> byMail = repo.findByMail(mailId);
+		return byMail;
+	}
+
+	@Override
+	public boolean forgotPassword(String mail) {
+		Optional<Instrgram> byMail = repo.findByMail(mail);
+		Instrgram instrgram = byMail.get();
+		
+		if(byMail != null) {
+			mailSended.mailSend(instrgram.getMail(), "Forget Password request","hey..."+instrgram.getName()+"your password is"+instrgram.getPassword());
+			return true;
+		}else {
+			return false;
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 
 	
